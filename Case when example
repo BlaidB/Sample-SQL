@@ -19,11 +19,11 @@ case when datepart(q.Transaction_date) between "01Apr2022"d and "30Jun2022"d The
 ,sum(revenue)-sum(Margin) as Spend format=dollar15.
 
 from HD.REVENUE Q 
-Left Join HD.LIMITED_INVINTORY_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join HD.LIMITED_INVINTORY_ENHANCEMENTS lie on lie.PART_NUMBER = q.PART_NUMBER
 Left Join HD.COMPANIES com on com.COMPANY_ID = q.Supplier_id
 Left join HD.VENDORS v on v.COMPANY_ID = q.Supplier_id
 Left Join HD.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
-left join HD.LIMITED_INVINTORY_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+left join HD.LIMITED_INVINTORY_DETAILS lid on lid.PART_NUMBER = q.PART_NUMBER
 Left Join HD.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
 left join HD.OEMs o on o.COMPANY_ID = q.OEM_ID
 

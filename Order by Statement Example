@@ -2,9 +2,9 @@ PROC SQL;
 	create table test2 as
 
 SELECT 
-q.vendor_id
+q.Supplier_id
 ,v.COMPANY_name as Vendor_name
-,lie.CLEAN_PART_NUMBER as Clean_Part_Number
+,lie.PART_NUMBER as Part_Number
 ,lid.CONDITION_CODE as condition_code
 ,sum(q.REVENUE) as Total_Revenue format = dollar15.2
 ,sum(q.Margin) as Total_Margin format = dollar15.2
@@ -14,10 +14,10 @@ q.vendor_id
 ,sum(q.Quantity) as Total_Quantity
 
 
-from D_DW.RORM_ALL q
-left Join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
-Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID =lid.LINE_ITEM_ID
-Left Join D_DW.VENDORS v on v.COMPANY_ID = q.vendor_id
+from HD.REVENUE Q 
+left join HD.LIMITED_INVINTORY_DETAILS lid on lid.PART_NUMBER = q.PART_NUMBER
+Left Join HD.LIMITED_INVINTORY_ENHANCEMENTS lie on lie.PART_NUMBER = q.PART_NUMBER
+Left join HD.VENDORS v on v.COMPANY_ID = q.Supplier_id
 left join D_DW.Customers cus on cus.company_id = q.customer_id
 where q.Transaction_date between "01Jun2022"d and "30Jun2023"d and cus.Company_ID in(17420)
 

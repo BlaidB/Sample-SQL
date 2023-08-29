@@ -1,0 +1,120 @@
+proc sql;
+create table Pro_Customers as
+select distinct parent_id
+from d_dw.enterprise_details_sites
+where program_type like 'S%' and (end_date> today() or end_date is null)
+;quit;
+
+Proc SQL;
+create table "Current" as 
+select DISTINCT 
+q.LINE_ITEM_ID
+,q.VENDOR_ID 
+,c.year
+,c.week
+,q.PRODUCT_CATEGORY_ID as Product_Category
+,propcase(modality_code) as mod
+,bs.BUDGET_SEGMENT as Budget_Segment
+,bs.SUB_CATEGORY as Sub_Category
+,cc.CONDITION_CODE as Condition_Code
+,lie.BIZ_DAYS_TO_SHIP as BIZ_DAYS_TO_SHIP
+,case when p.parent_id is not null then "Enterprise" else "Digital" end as Cust
+,sum(q.REQUESTS) as Requests format=12.
+,sum(q.orders) as Orders format=12. 
+,sum(q.QUANTITY) as Quantity
+,q.PRICE
+,q.COST
+,sum(revenue) as Revenue format=dollar15. 
+,sum(Margin) as Margin format=dollar15. 
+
+from D_DW.RORM_ALL q
+left join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left join D_DW.VENDORS v on v.COMPANY_ID = q.VENDOR_ID
+Left Join D_DW.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
+left join d_dw.modalities m on m.modality_id = q.modality_id 
+Left Join D_DW.BUDGET_SEGMENTS bs on bs.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
+Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CUSTOMERS cut on cut.COMPANY_ID = q.CUSTOMER_ID
+left join work.pro_customers p on cut.lvl1_company_id = p.parent_id
+
+WHERE year in (2023) and MONTH in (7) and ORDER_TYPE in ("Parts")
+
+Group by 1,2,3,4,5,6,7,8,9,10,11,15,16;
+;quit;
+
+Proc SQL;
+create table YOY as 
+select DISTINCT 
+q.LINE_ITEM_ID 
+,q.VENDOR_ID 
+,c.year
+,c.week
+,q.PRODUCT_CATEGORY_ID as Product_Category
+,propcase(modality_code) as mod
+,bs.BUDGET_SEGMENT as Budget_Segment
+,bs.SUB_CATEGORY as Sub_Category
+,cc.CONDITION_CODE as Condition_Code
+,lie.BIZ_DAYS_TO_SHIP as BIZ_DAYS_TO_SHIP
+,case when p.parent_id is not null then "Enterprise" else "Digital" end as Cust
+,sum(q.REQUESTS) as Requests format=12.
+,sum(q.orders) as Orders format=12. 
+,sum(q.QUANTITY) as Quantity
+,q.PRICE
+,q.COST
+,sum(revenue) as Revenue format=dollar15. 
+,sum(Margin) as Margin format=dollar15. 
+
+from D_DW.RORM_ALL q
+left join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left join D_DW.VENDORS v on v.COMPANY_ID = q.VENDOR_ID
+Left Join D_DW.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
+left join d_dw.modalities m on m.modality_id = q.modality_id 
+Left Join D_DW.BUDGET_SEGMENTS bs on bs.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
+Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CUSTOMERS cut on cut.COMPANY_ID = q.CUSTOMER_ID
+left join work.pro_customers p on cut.lvl1_company_id = p.parent_id
+
+WHERE year in (2022) and MONTH in (7) and ORDER_TYPE in ("Parts")
+
+Group by 1,2,3,4,5,6,7,8,9,10,11,15,16;
+;quit;
+
+Proc SQL;
+create table MOM as 
+select DISTINCT 
+q.LINE_ITEM_ID 
+,q.VENDOR_ID as Vendor_ID
+,c.year
+,c.week
+,q.PRODUCT_CATEGORY_ID as Product_Category
+,propcase(modality_code) as mod
+,bs.BUDGET_SEGMENT as Budget_Segment
+,bs.SUB_CATEGORY as Sub_Category
+,cc.CONDITION_CODE as Condition_Code
+,lie.BIZ_DAYS_TO_SHIP as BIZ_DAYS_TO_SHIP
+,case when p.parent_id is not null then "Enterprise" else "Digital" end as Cust
+,sum(q.REQUESTS) as Requests format=12.
+,sum(q.orders) as Orders format=12. 
+,sum(q.QUANTITY) as Quantity
+,q.PRICE
+,q.COST
+,sum(revenue) as Revenue format=dollar15. 
+,sum(Margin) as Margin format=dollar15. 
+
+from D_DW.RORM_ALL q
+left join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left join D_DW.VENDORS v on v.COMPANY_ID = q.VENDOR_ID
+Left Join D_DW.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
+left join d_dw.modalities m on m.modality_id = q.modality_id 
+Left Join D_DW.BUDGET_SEGMENTS bs on bs.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
+Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.CUSTOMERS cut on cut.COMPANY_ID = q.CUSTOMER_ID
+left join work.pro_customers p on cut.lvl1_company_id = p.parent_id
+
+WHERE year in (2023) and MONTH in (6) and ORDER_TYPE in ("Parts")
+
+Group by 1,2,3,4,5,6,7,8,9,10,11,15,16;
+;quit;

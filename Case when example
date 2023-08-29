@@ -4,30 +4,30 @@ SELECT
 case when datepart(q.Transaction_date) between "01Apr2022"d and "30Jun2022"d Then "2022 Q2"
 	  when datepart(q.Transaction_date) between "01Apr2023"d and "30Jun2023"d Then "2023 Q2" 
 	  else "not part of data set" end as "Q2 comp"n
-,lie.CLEAN_PART_NUMBER
+,lie.PART_NUMBER
 ,com.COMPANY_ID
-,case when q.Vendor_id in (18860) then 'Siemens Medical Solutions' else v.COMPANY_NAME end as Vendor
+,case when q.Supplier_id in (18860) then 'Siemens Medical Solutions' else v.COMPANY_NAME end as Vendor
 ,year
 ,cc.CONDITION_CODE
 ,o.COMPANY_NAME as OEM_name
-,sum(q.REQUESTS) as Requests format=12.
+,sum(q.QUOETS) as Requests format=12.
 ,sum(q.orders) as Orders format=12. 
-,sum(q.orders)/sum(q.REQUESTS) as Win_rate format =percent.2
+,sum(q.orders)/sum(q.QUOETS) as Win_rate format =percent.2
 ,sum(q.QUANTITY) as Quantity
 ,sum(Margin) as Margin format=dollar15. 
 ,sum(revenue) as Revenue format=dollar15.
 ,sum(revenue)-sum(Margin) as Spend format=dollar15.
 
-from D_DW.RORM_ALL Q 
-Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
-Left Join D_DW.COMPANIES com on com.COMPANY_ID = q.VENDOR_ID
-Left join D_DW.VENDORS v on v.COMPANY_ID = q.VENDOR_ID
-Left Join D_DW.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
-left join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
-Left Join D_DW.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
-left join D_DW.OEMs o on o.COMPANY_ID = q.OEM_ID
+from HD.REVENUE Q 
+Left Join HD.LIMITED_INVINTORY_ENHANCEMENTS lie on lie.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join HD.COMPANIES com on com.COMPANY_ID = q.Supplier_id
+Left join HD.VENDORS v on v.COMPANY_ID = q.Supplier_id
+Left Join HD.CALENDAR c on datepart(c.date_key) = datepart(Q.Transaction_date)
+left join HD.LIMITED_INVINTORY_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join HD.CONDITION_CODES cc on cc.CONDITION_CODE = lid.CONDITION_CODE
+left join HD.OEMs o on o.COMPANY_ID = q.OEM_ID
 
-Where lie.CLEAN_PART_NUMBER in ('10789392','10789388','4838863','10789393','10787113','8247449','5515775','7445641','8096948','10662323','11234550','10500340','10789388','10787113','10787113','10789388','8247449')
+Where lie.PART_NUMBER in ('10789392','10789388','4838863','10789393','10787113','8247449','5515775','7445641','8096948','10662323','11234550','10500340','10789388','10787113','10787113','10789388','8247449')
 and (datepart(q.Transaction_date) between "01Apr2022"d and "30Jun2022"d 
 or datepart(q.Transaction_date) between "01Apr2023"d and "30Jun2023"d)
 Group By 1,2,3,4,5,6,7

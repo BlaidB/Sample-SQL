@@ -6,7 +6,7 @@ PROC SQL;
 
 create table OEM as 
 select 
-q.Vendor_id
+q.supplier_ID
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2018"d and "30Jun2019"d then q.revenue else . end) as year_2019 format = dollar15.2
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2019"d and "30Jun2020"d then q.revenue else . end) as year_2020 format = dollar15.2
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2020"d and "30Jun2021"d then q.revenue else . end) as year_2021 format = dollar15.2
@@ -17,11 +17,11 @@ q.Vendor_id
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2020"d and "30Jun2021"d then q.MARGIN else . end) as Margin_2021 format = dollar15.2
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2021"d and "30Jun2022"d then q.MARGIN else . end) as Margin_2022 format = dollar15.2
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2022"d and "30JUN2023"d then q.MARGIN else . end) as Margin_2023 format = dollar15.2
-,sum(Case when datepart(q.Transaction_date) between "01JUl2018"d and "30Jun2019"d then q.REQUESTS else . end) as Requests_2019
-,sum(Case when datepart(q.Transaction_date) between "01Jul2019"d and "30Jun2020"d then q.REQUESTS else . end) as Requests_2020
-,sum(Case when datepart(q.Transaction_date) between "01Jul2020"d and "30Jun2021"d then q.REQUESTS else . end) as Requests_2021
-,sum(Case when datepart(q.Transaction_date) between "01Jul2021"d and "30Jun2022"d then q.REQUESTS else . end) as Requests_2022
-,sum(Case when datepart(q.Transaction_date) between "01Jul2022"d and "30JUN2023"d then q.REQUESTS else . end) as Requests_2023
+,sum(Case when datepart(q.Transaction_date) between "01JUl2018"d and "30Jun2019"d then q.QUOETS else . end) as QUOETS_2019
+,sum(Case when datepart(q.Transaction_date) between "01Jul2019"d and "30Jun2020"d then q.QUOETS else . end) as QUOETS_2020
+,sum(Case when datepart(q.Transaction_date) between "01Jul2020"d and "30Jun2021"d then q.QUOETS else . end) as QUOETS_2021
+,sum(Case when datepart(q.Transaction_date) between "01Jul2021"d and "30Jun2022"d then q.QUOETS else . end) as QUOETS_2022
+,sum(Case when datepart(q.Transaction_date) between "01Jul2022"d and "30JUN2023"d then q.QUOETS else . end) as QUOETS_2023
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2018"d and "30Jun2019"d then q.RETURNS else . end) as Returns_2019
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2019"d and "30Jun2020"d then q.RETURNS else . end) as Returns_2020
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2020"d and "30Jun2021"d then q.RETURNS else . end) as Returns_2021
@@ -29,11 +29,11 @@ q.Vendor_id
 ,sum(Case when datepart(q.Transaction_date) between "01Jul2022"d and "30JUN2023"d then q.RETURNS else . end) as Returns_2023
 ,sum(q.REVENUE) as Total_Revenue format = dollar15.2
 ,sum(q.QUANTITY) as Total_Quanity
-,sum(q.REQUESTS) as  Total_requests
+,sum(q.QUOETS) as  Total_QUOETS
 ,sum(q.RETURNS) as Total_returns
 ,sum(q.MARGIN) as Total_Margin format = dollar15.2
-from d_dw.RORM_ALL q
-Left Join D_DW.COMPANIES com on com.COMPANY_ID = q.VENDOR_ID
+from HD.REVENUE q
+Left Join HD.COMPANIES com on com.COMPANY_ID = q.VENDOR_ID
 
 where q.Transaction_date between "&start_date"d and "&end_date"d and q.Vendor_id in (17080,63521,108700,17420)
 Group by 1
@@ -57,11 +57,11 @@ Case when o.Vendor_id in (17080,63521,108700) then "Multi"
 ,sum(o.Margin_2021) as Margin_2021 format = dollar15.2
 ,sum(o.Margin_2022) as Margin_2022 format = dollar15.2
 ,sum(o.Margin_2023) as Margin_2023 format = dollar15.2
-,sum(o.Requests_2019) as Requests_2019 
-,sum(o.Requests_2020) as Requests_2020
-,sum(o.Requests_2021) as Requests_2021
-,sum(o.Requests_2022) as Requests_2022
-,sum(o.Requests_2023) as Requests_2023
+,sum(o.QUOETS_2019) as QUOETS_2019 
+,sum(o.QUOETS_2020) as QUOETS_2020
+,sum(o.QUOETS_2021) as QUOETS_2021
+,sum(o.QUOETS_2022) as QUOETS_2022
+,sum(o.QUOETS_2023) as QUOETS_2023
 ,sum(o.Returns_2019) as Returns_2019
 ,sum(o.Returns_2020) as Returns_2020
 ,sum(o.Returns_2021) as Returns_2021
@@ -75,22 +75,22 @@ Case when o.Vendor_id in (17080,63521,108700) then "Multi"
 ,sum(o.Margin_2021) - sum(o.Margin_2020) as Margin_diffrence20 format = dollar15.2
 ,sum(o.Margin_2022) - sum(o.Margin_2021) as Margin_diffrence21 format = dollar15.2
 ,sum(o.Margin_2023) - sum(o.Margin_2022) as Margin_diffrence22 format = dollar15.2
-,sum(o.Requests_2020) - sum(o.Requests_2019) as Requests_diffrence19
-,sum(o.Requests_2021) - sum(o.Requests_2020) as Requests_diffrence20
-,sum(o.Requests_2022) - sum(o.Requests_2021) as Requests_diffrence21
-,sum(o.Requests_2023) - sum(o.Requests_2022) as Requests_diffrence22
+,sum(o.QUOETS_2020) - sum(o.QUOETS_2019) as QUOETS_diffrence19
+,sum(o.QUOETS_2021) - sum(o.QUOETS_2020) as QUOETS_diffrence20
+,sum(o.QUOETS_2022) - sum(o.QUOETS_2021) as QUOETS_diffrence21
+,sum(o.QUOETS_2023) - sum(o.QUOETS_2022) as QUOETS_diffrence22
 ,sum(o.Returns_2020) - sum(o.Returns_2019) as Returns_diffrence19
 ,sum(o.Returns_2021) - sum(o.Returns_2020) as Returns_diffrence20
 ,sum(o.Returns_2022) - sum(o.Returns_2021) as Returns_diffrence21
 ,sum(o.Returns_2023) - sum(o.Returns_2022) as Returns_diffrence22
 ,sum(o.total_Revenue) as Total_Revenue format = dollar15.2
 ,sum(o.Total_Quanity) as Total_Quanity
-,sum(o.REQUESTS) as  Total_requests
+,sum(o.QUOETS) as  Total_QUOETS
 ,sum(o.RETURNS) as Total_returns
 ,sum(o.MARGIN) as Total_Margin format = dollar15.2
 
 from work.OEM O
-Left Join D_DW.COMPANIES com on com.COMPANY_ID = o.VENDOR_ID
+Left Join HD.COMPANIES com on com.COMPANY_ID = o.VENDOR_ID
 
 
 Group by 1

@@ -1,0 +1,27 @@
+PROC SQL;
+	create table test2 as
+
+SELECT 
+q.vendor_id
+,v.COMPANY_name as Vendor_name
+,lie.CLEAN_PART_NUMBER as Clean_Part_Number
+,lid.CONDITION_CODE as condition_code
+,sum(q.REVENUE) as Total_Revenue format = dollar15.2
+,sum(q.Margin) as Total_Margin format = dollar15.2
+,Sum(q.revenue) - sum(q.margin) as Spend format = dollar15.2
+,Sum(q.Returns) as Total_returns
+,Sum(q.orders) as Total_Orders
+,sum(q.Quantity) as Total_Quantity
+
+
+from D_DW.RORM_ALL q
+left Join D_DW.LINE_ITEM_DETAILS lid on lid.LINE_ITEM_ID = q.LINE_ITEM_ID
+Left Join D_DW.LINE_ITEM_ENHANCEMENTS lie on lie.LINE_ITEM_ID =lid.LINE_ITEM_ID
+Left Join D_DW.VENDORS v on v.COMPANY_ID = q.vendor_id
+left join D_DW.Customers cus on cus.company_id = q.customer_id
+where q.Transaction_date between "01Jun2022"d and "30Jun2023"d and cus.Company_ID in(17420)
+
+Group by 1,2,3,4
+Order by 5 DESC
+
+;Quit;
